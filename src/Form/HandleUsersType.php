@@ -12,15 +12,27 @@ use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\HttpFoundation\RequestStack;
 
+/**
+ * Class HandleUsersType
+ * @package App\Form
+ */
 class HandleUsersType extends AbstractType
 {
     private $requestStack;
 
+    /**
+     * HandleUsersType constructor.
+     * @param RequestStack $requestStack
+     */
     public function __construct(RequestStack $requestStack)
     {
         $this->requestStack = $requestStack;
     }
 
+    /**
+     * @param FormBuilderInterface $builder
+     * @param array $options
+     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $request = $this->requestStack->getCurrentRequest();
