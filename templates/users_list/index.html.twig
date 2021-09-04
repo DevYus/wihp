@@ -112,6 +112,7 @@ font-weight: 900;
                     <th>Login</th>
                     <th>Role</th>
                     <th>Status</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
 
@@ -124,6 +125,9 @@ font-weight: 900;
                         <td>{{ user.login }}</td>
                         <td>{{ user.roles[0] }}</td>
                         <td>{{ user.status }}</td>
+                        <td>
+                            <a href="{{ path('handle_users_edit', {'id' : user.id })}}">Modifier</a>
+                        </td>
                     </tr>
                 {% endfor %}
             </tbody>

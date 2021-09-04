@@ -10,11 +10,22 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 class HandleUsersType extends AbstractType
 {
+    private $requestStack;
+
+    public function __construct(RequestStack $requestStack)
+    {
+        $this->requestStack = $requestStack;
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $request = $this->requestStack->getCurrentRequest();
+        $route = $request->attributes->get('_route');
+
         $builder
             ->add('lastname', TextType::class)
             ->add('firstname', TextType::class)
@@ -27,12 +38,16 @@ class HandleUsersType extends AbstractType
                     'Admin' => 'ROLE_ADMIN',
                     'Customer' => 'ROLE_CUSTOMER',
                 ],
-                'required' => true,
+                'required' => false,
                 'multiple' => false,
                 'expanded' => false,
             ])
             ->add('status',TextType::class)
         ;
+
+        if($route == 'handle_users_edit') {
+            $builder->remove('password');
+        }
 
         $this->roleTransformer($builder, 'roles');
 
@@ -54,7 +69,7 @@ class HandleUsersType extends AbstractType
      */
     private function roleTransformer($builder, $field)
     {
-        // We will transform our array to string to display your form
+        // We will transform our array to string to display role attribute in our form
         $builder->get($field)
             ->addModelTransformer(new CallbackTransformer(
                 function ($rolesArray) {
