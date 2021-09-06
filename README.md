@@ -1,5 +1,5 @@
 * Clone le dépot sur ta machine
-git clone 
+git clone https://github.com/DevYus/wihp.git
 
 * Se deplacer dans le dossier en question
 cd whip
