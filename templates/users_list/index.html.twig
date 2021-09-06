@@ -17,6 +17,10 @@
             <a href="{{ path('handle_users') }}" class="addUserBtn">Ajouter un utilisateur</a>
         {% endif %}
 
+        <div class="flashMessage">
+            <span class="spanFlashMessage"></span>
+        </div>
+
         <table class="tableUsersList">
 
             <thead>
@@ -42,20 +46,19 @@
                                 <td>{{ user.lastname }}</td>
                                 <td>{{ user.firstname }}</td>
                                 <td>{{ user.email }}</td>
-                                <td>{{ user.login }}</td>
+                                <td id="tdLogin" data-login="{{ user.login }}">{{ user.login }}</td>
                                 <td>{{ user.roles[0] }}</td>
 
                                 <td>
                                     <span id="spanStatus">{{ user.status }}</span>
-                                    <form action="{{ path('update_ajax', { 'id': user.id }) }}" method="post">
-                                        <select name="selectStatus" class="form-control status">
-                                            <option class="optionStatusBtn" value="{{ user.status }}"></option>
+                                    <form action="" method="post">
+                                        <select name="selectStatus" data-id="{{ user.id }}" class="form-control status">
+                                            <option class="optionStatusBtn defaultValue" value="{{ user.status }}"></option>
                                             <option class="optionStatusBtn" value="valide">validé</option>
                                             <option class="optionStatusBtn" value="en attente">en attente</option>
                                             <option class="optionStatusBtn" value="desactive">desactive</option>
                                         </select>
-                                        <input type="hidden" id="idUser"value="{{ user.id }}">
-                                        <input type="submit" value="Update">
+                                        {#<input type="hidden" id="idUser"value="{{ user.id }}">#}
                                     </form>
 
                                 </td>
@@ -76,20 +79,19 @@
                                 <td>{{ user.lastname }}</td>
                                 <td>{{ user.firstname }}</td>
                                 <td>{{ user.email }}</td>
-                                <td>{{ user.login }}</td>
+                                <td id="tdLogin" data-login="{{ user.login }}">{{ user.login }}</td>
                                 <td>{{ user.roles[0] }}</td>
 
                                 <td>
                                     <span id="spanStatus">{{ user.status }}</span>
-                                    <form action="{{ path('update_ajax', { 'id': user.id }) }}" method="post">
-                                        <select name="selectStatus" class="form-control">
-                                            <option class="optionStatusBtn" value="{{ user.status }}"></option>
+                                    <form action="" method="post">
+                                        <select name="selectStatus" data-id="{{ user.id }}" class="form-control status">
+                                            <option class="optionStatusBtn defaultValue" value="{{ user.status }}"></option>
                                             <option class="optionStatusBtn" value="valide">validé</option>
                                             <option class="optionStatusBtn" value="en attente">en attente</option>
                                             <option class="optionStatusBtn" value="desactive">desactive</option>
                                         </select>
-                                        <input type="hidden" id="idUser"value="{{ user.id }}">
-                                        <input type="submit" value="Update">
+                                        {#<input type="hidden" id="idUser"value="{{ user.id }}">#}
                                     </form>
 
                                 </td>
@@ -120,24 +122,35 @@
 
         $(document).ready(function(){
             $('select.status').on('change',function () {
-                // On recupere la valeur du select si il change
-                let decision = $(this).val();
-                let id = $('#idUser').val();
-                let spanStatus = $('#spanStatus').text();
 
-                alert(decision);
-                alert(spanStatus);
-                alert(id);
+                // On take value of the select if it change
+                let optionValue = $(this).val();
+                // Url for ajax
+                let path = '/update/ajax';
+                // Data Id needed to get the id ( otherwise jquery take only the first select of the loop )
+                let id = $(this).attr("data-id");
+                // Take login .Need to display flash message
+                let login = $("#tdLogin").attr("data-login");
+
+                alert($('.defaultValue').val(optionValue));
 
                 $.ajax({
                     type:"POST",
-                    url:{{ path('update_ajax',{'id' : id}) }},
-                    data: {
-                        decision:decision,
-                        spanStatus:spanStatus
+                    url: path,
+                    data: { // data send by the form, we need id and new status
+                        id:id,
+                        status:optionValue
                     },
-                    success:function(msg) {
-                        alert(msg);
+                    success:function() {
+                        // Update table span status
+                        $('#spanStatus').text(optionValue);
+                        // Update default option select value
+                        $('.defaultValue').val(optionValue);
+                        // Update element after success to notice the user
+                        $('.spanFlashMessage')
+                            .text("Vous avec passé le status de " + login + " en " + optionValue)
+                            .css('display','block')
+                        ;
                     }
                 })
 

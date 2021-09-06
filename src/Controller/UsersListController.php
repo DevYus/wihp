@@ -10,6 +10,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 
 class UsersListController extends AbstractController
@@ -47,15 +48,22 @@ class UsersListController extends AbstractController
     }
 
     /**
-     * @Route("/update/ajax/{id<\d+>}", name="update_ajax", methods={"POST"})
+     * @Route("/update/ajax", name="update_ajax", methods={"POST"})
      */
-    public function ajaxAction(UserRepository $userRepository,User $user,Request $request)
+    public function ajaxAction(UserRepository $userRepository,EntityManagerInterface $em,Request $request)
     {
 
-        $updateStatus = $request->request->get('selectStatus');
-        $userRepository->updateStatusUser($updateStatus,$user->getId());
+        $updateStatus = $request->request->get('status');
+        $idMember = $request->request->get('id');
 
-        return $this->redirectToRoute('users_list');
+        //$userRepository->updateStatusUser($updateStatus,$idMember);
+
+        $userUpdate = $userRepository->findOneBy(['id' => $idMember]);
+        $userUpdate->setStatus($updateStatus);
+
+        $em->persist($userUpdate);
+        $em->flush();
+        return new JsonResponse($userUpdate);
 
     }
 

@@ -125,3 +125,12 @@ th, td {
     text-size: 20px;
     font-size: 19px;
 }
+
+.spanFlashMessage {
+    background: #cefeb8;
+    padding: 15px;
+    margin: 12px 0px;
+    display: block;
+    width: 390px;
+    display: none;
+}
