@@ -5,93 +5,6 @@
 {% block body %}
 <style>
 
-body {
-    margin:0;
-    padding:0
-}
-
-header {
-    background: #6EB3BE;
-}
-
-.nav {
- color: #fff;
- width:50%;
- margin:auto;
- padding:20px;
-}
-
-
-.text-transform {
-    text-transform: uppercase;
-}
-
-.title-header {
-font-size: 20px;
-font-weight: 900;
-
-}
-
-.addUserBtn {
-    width: 180px;
-    background: #6EB3BE;
-    padding: 5px;
-    margin-bottom: 5px;
-    display: block;
-    text-align: center;
-    text-decoration: none;
-    border-radius: 2px;
-    color: #FFF;
-    float: right;
-    margin-bottom: 20px;
-}
-
-  .wrapper {
-    width: 50%;
-    margin: 30px auto;
-    display: block;
-    font-family: 'Open Sans', sans-serif;
-   }
-
-   .wrapper h1 {font-size:22px;}
-
-   th, td {
-    width:130px;
-    padding:20px;
-    text-align: center;
-   }
-
-   .tableUsersList {
-        border-radius: 5px;
-        font-size: 14px;
-        width: 100%;
-        max-width: 100%;
-        white-space: nowrap;
-        border: none;
-        border-collapse: collapse;
-   }
-
-
-    .tableUsersList td {
-        border-right: 1px solid #f8f8f8;
-        font-size: 12px;
-    }
-
-    .tableUsersList thead th {
-        color: #ffffff;
-        background: #4FC3A1;
-    }
-
-    .tableUsersList thead th:nth-child(odd) {
-        color: #ffffff;
-        background: #324960;
-    }
-
-    .tableUsersList tr:nth-child(even) {
-        background: #F8F8F8;
-    }
-
-
 
 </style>
 
@@ -100,7 +13,9 @@ font-weight: 900;
 
     <div class="container-list">
 
-        <a href="{{ path('handle_users') }}" class="addUserBtn">Ajouter un utilisateur</a>
+        {% if (is_granted('ROLE_SUPER_ADMIN') or is_granted('ROLE_ADMIN')) %}
+            <a href="{{ path('handle_users') }}" class="addUserBtn">Ajouter un utilisateur</a>
+        {% endif %}
 
         <table class="tableUsersList">
 
@@ -118,17 +33,75 @@ font-weight: 900;
 
             <tbody>
                 {% for user in users %}
-                    <tr>
-                        <td>{{ user.lastname }}</td>
-                        <td>{{ user.firstname }}</td>
-                        <td>{{ user.email }}</td>
-                        <td>{{ user.login }}</td>
-                        <td>{{ user.roles[0] }}</td>
-                        <td>{{ user.status }}</td>
-                        <td>
-                            <a href="{{ path('handle_users_edit', {'id' : user.id })}}">Modifier</a>
-                        </td>
-                    </tr>
+
+                    {% if is_granted('ROLE_SUPER_ADMIN')  %}
+
+                        {% if user.roles[0] == 'ROLE_ADMIN' or user.roles[0] == 'ROLE_CUSTOMER' %}
+
+                            <tr>
+                                <td>{{ user.lastname }}</td>
+                                <td>{{ user.firstname }}</td>
+                                <td>{{ user.email }}</td>
+                                <td>{{ user.login }}</td>
+                                <td>{{ user.roles[0] }}</td>
+
+                                <td>
+                                    <span id="spanStatus">{{ user.status }}</span>
+                                    <form action="{{ path('update_ajax', { 'id': user.id }) }}" method="post">
+                                        <select name="selectStatus" class="form-control status">
+                                            <option class="optionStatusBtn" value="{{ user.status }}"></option>
+                                            <option class="optionStatusBtn" value="valide">validé</option>
+                                            <option class="optionStatusBtn" value="en attente">en attente</option>
+                                            <option class="optionStatusBtn" value="desactive">desactive</option>
+                                        </select>
+                                        <input type="hidden" id="idUser"value="{{ user.id }}">
+                                        <input type="submit" value="Update">
+                                    </form>
+
+                                </td>
+                                <td>
+                                    <a href="{{ path('handle_users_edit', {'id' : user.id })}}">Modifier</a>
+                                </td>
+                            </tr>
+
+                        {% endif %}
+
+                    {% endif %}
+
+                    {% if is_granted('ROLE_ADMIN')  %}
+
+                        {% if user.roles[0] == 'ROLE_CUSTOMER' %}
+
+                            <tr>
+                                <td>{{ user.lastname }}</td>
+                                <td>{{ user.firstname }}</td>
+                                <td>{{ user.email }}</td>
+                                <td>{{ user.login }}</td>
+                                <td>{{ user.roles[0] }}</td>
+
+                                <td>
+                                    <span id="spanStatus">{{ user.status }}</span>
+                                    <form action="{{ path('update_ajax', { 'id': user.id }) }}" method="post">
+                                        <select name="selectStatus" class="form-control">
+                                            <option class="optionStatusBtn" value="{{ user.status }}"></option>
+                                            <option class="optionStatusBtn" value="valide">validé</option>
+                                            <option class="optionStatusBtn" value="en attente">en attente</option>
+                                            <option class="optionStatusBtn" value="desactive">desactive</option>
+                                        </select>
+                                        <input type="hidden" id="idUser"value="{{ user.id }}">
+                                        <input type="submit" value="Update">
+                                    </form>
+
+                                </td>
+                                <td>
+                                    <a href="{{ path('handle_users_edit', {'id' : user.id })}}">Modifier</a>
+                                </td>
+                            </tr>
+
+                        {% endif %}
+
+                    {% endif %}
+
                 {% endfor %}
             </tbody>
 
@@ -137,5 +110,41 @@ font-weight: 900;
     </div>
 
 </div>
+
+{% endblock %}
+
+{% block javascripts %}
+
+    <script language="javascript" src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+    <script language="javascript">
+
+        $(document).ready(function(){
+            $('select.status').on('change',function () {
+                // On recupere la valeur du select si il change
+                let decision = $(this).val();
+                let id = $('#idUser').val();
+                let spanStatus = $('#spanStatus').text();
+
+                alert(decision);
+                alert(spanStatus);
+                alert(id);
+
+                $.ajax({
+                    type:"POST",
+                    url:{{ path('update_ajax',{'id' : id}) }},
+                    data: {
+                        decision:decision,
+                        spanStatus:spanStatus
+                    },
+                    success:function(msg) {
+                        alert(msg);
+                    }
+                })
+
+
+            });
+        });
+
+    </script>
 
 {% endblock %}

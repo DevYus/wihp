@@ -4,6 +4,8 @@ namespace App\Repository;
 
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\DBAL\DriverManager;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -34,6 +36,20 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $user->setPassword($newHashedPassword);
         $this->_em->persist($user);
         $this->_em->flush();
+    }
+
+    public function updateStatusUser($updateStatusUser, $id)
+    {
+        $sql = "UPDATE user SET status = :status WHERE id = :id";
+        $conn = $this->getEntityManager()->getConnection();
+        // For the futur, when doctrine 3.4 will be implemented - execute method and executeUpdate will be deprecated
+        $response = $conn->executeUpdate(
+            $sql,
+            ['status' => $updateStatusUser, 'id' => $id]
+        );
+
+        return $response;
+
     }
 
     // /**

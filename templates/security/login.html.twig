@@ -3,7 +3,7 @@
 {% block title %}Log in!{% endblock %}
 
 {% block body %}
-<form method="post">
+<form method="post" class="loginForm">
     {% if error %}
         <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
     {% endif %}
@@ -15,10 +15,10 @@
     {% endif %}
 
     <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
-    <label for="inputLogin">Login</label>
-    <input type="text" value="{{ last_username }}" name="login" id="inputLogin" class="form-control" autocomplete="username" required autofocus>
-    <label for="inputPassword">Password</label>
-    <input type="password" name="password" id="inputPassword" class="form-control" autocomplete="current-password" required>
+    <label for="inputLogin" class="loginLabel">Login</label>
+    <input type="text" value="{{ last_username }}" name="login" id="inputLogin" class="form-control inputLoginForm" autocomplete="username" required autofocus><br>
+    <label for="inputPassword" class="loginLabel">Password</label>
+    <input type="password" name="password" id="inputPassword" class="form-control inputLoginForm" autocomplete="current-password" required><br>
 
     <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
 
@@ -33,7 +33,7 @@
         </div>
     #}
 
-    <button class="btn btn-lg btn-primary" type="submit">
+    <button class="btn btn-lg btn-primary btnLogin" type="submit">
         Sign in
     </button>
 </form>

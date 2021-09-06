@@ -11,6 +11,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Security\Core\Security;
 
 /**
  * Class HandleUsersType
@@ -19,14 +20,17 @@ use Symfony\Component\HttpFoundation\RequestStack;
 class HandleUsersType extends AbstractType
 {
     private $requestStack;
+    private $security;
 
     /**
      * HandleUsersType constructor.
      * @param RequestStack $requestStack
+     * @param Security $security
      */
-    public function __construct(RequestStack $requestStack)
+    public function __construct(RequestStack $requestStack, Security $security)
     {
         $this->requestStack = $requestStack;
+        $this->security = $security;
     }
 
     /**
@@ -38,24 +42,60 @@ class HandleUsersType extends AbstractType
         $request = $this->requestStack->getCurrentRequest();
         $route = $request->attributes->get('_route');
 
+        //Get role of the current user to custom the select role
+        $userGranted = $this->security->getUser()->getRoles()[0];
+
         $builder
-            ->add('lastname', TextType::class)
-            ->add('firstname', TextType::class)
-            ->add('password',PasswordType::class)
-            ->add('email', TextType::class)
-            ->add('login',TextType::class)
-            ->add('roles',ChoiceType::class, [
-                'choices' => [
-                    'Super Admin' => 'ROLE_SUPER_ADMIN',
-                    'Admin' => 'ROLE_ADMIN',
-                    'Customer' => 'ROLE_CUSTOMER',
-                ],
-                'required' => false,
-                'multiple' => false,
-                'expanded' => false,
+            ->add('lastname', TextType::class, [
+                'attr' => ['class' => 'inputLoginForm'],
             ])
-            ->add('status',TextType::class)
-        ;
+            ->add('firstname', TextType::class, [
+                'attr' => ['class' => 'inputLoginForm'],
+            ])
+            ->add('password',PasswordType::class, [
+                'attr' => ['class' => 'inputLoginForm'],
+            ])
+            ->add('email', TextType::class, [
+                'attr' => ['class' => 'inputLoginForm'],
+            ])
+            ->add('login',TextType::class,  [
+                'attr' => ['class' => 'inputLoginForm'],
+            ]);
+
+            if($userGranted == 'ROLE_SUPER_ADMIN') {
+
+                $builder
+                    ->add('roles', ChoiceType::class, [
+                        'attr' => ['class' => 'inputLoginForm'],
+                        'choices' => [
+                            'Admin' => 'ROLE_ADMIN',
+                            'Customer' => 'ROLE_CUSTOMER',
+                        ],
+                        'required' => false,
+                        'multiple' => false,
+                        'expanded' => false,
+                    ])
+                    ->add('status', TextType::class, [
+                        'attr' => ['class' => 'inputLoginForm'],
+                    ]);
+
+            } else if ($userGranted == 'ROLE_ADMIN') {
+
+                $builder
+                    ->add('roles', ChoiceType::class, [
+                        'attr' => ['class' => 'inputLoginForm'],
+                        'choices' => [
+                            'Customer' => 'ROLE_CUSTOMER',
+                        ],
+                        'required' => false,
+                        'multiple' => false,
+                        'expanded' => false,
+                    ])
+                    ->add('status', TextType::class, [
+                        'attr' => ['class' => 'inputLoginForm'],
+                    ]);
+            }
+
 
         if($route == 'handle_users_edit') {
             $builder->remove('password');

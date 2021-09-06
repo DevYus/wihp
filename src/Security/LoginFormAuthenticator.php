@@ -51,7 +51,7 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
         }
 
         // Redirect user after login if success
-        return new RedirectResponse($this->urlGenerator->generate('users_list'));
+        return new RedirectResponse($this->urlGenerator->generate('home_private'));
         throw new \Exception('TODO: provide a valid redirect inside '.__FILE__);
     }
 
