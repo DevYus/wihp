@@ -39,6 +39,8 @@ class HandleUsersType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        // Get the requestStack to get the request so the current route to hide user password
+        // Indeed the password must be known only to the user who has registered
         $request = $this->requestStack->getCurrentRequest();
         $route = $request->attributes->get('_route');
 
@@ -66,7 +68,7 @@ class HandleUsersType extends AbstractType
 
                 $builder
                     ->add('roles', ChoiceType::class, [
-                        'attr' => ['class' => 'inputLoginForm'],
+                        'attr' => ['class' => 'selectLoginForm'],
                         'choices' => [
                             'Admin' => 'ROLE_ADMIN',
                             'Customer' => 'ROLE_CUSTOMER',
@@ -75,15 +77,23 @@ class HandleUsersType extends AbstractType
                         'multiple' => false,
                         'expanded' => false,
                     ])
-                    ->add('status', TextType::class, [
-                        'attr' => ['class' => 'inputLoginForm'],
+                    ->add('status', ChoiceType::class, [
+                        'attr' => ['class' => 'selectLoginForm'],
+                        'choices' => [
+                            'valide' => 'valide',
+                            'desactive' => 'desactive',
+                            'en attente' => 'en attente'
+                        ],
+                        'required' => false,
+                        'multiple' => false,
+                        'expanded' => false,
                     ]);
 
             } else if ($userGranted == 'ROLE_ADMIN') {
 
                 $builder
                     ->add('roles', ChoiceType::class, [
-                        'attr' => ['class' => 'inputLoginForm'],
+                        'attr' => ['class' => 'selectLoginForm'],
                         'choices' => [
                             'Customer' => 'ROLE_CUSTOMER',
                         ],
@@ -91,8 +101,16 @@ class HandleUsersType extends AbstractType
                         'multiple' => false,
                         'expanded' => false,
                     ])
-                    ->add('status', TextType::class, [
-                        'attr' => ['class' => 'inputLoginForm'],
+                    ->add('status', ChoiceType::class, [
+                        'attr' => ['class' => 'selectLoginForm'],
+                        'choices' => [
+                            'valide' => 'valide',
+                            'desactive' => 'desactive',
+                            'en attente' => 'en attente'
+                        ],
+                        'required' => false,
+                        'multiple' => false,
+                        'expanded' => false,
                     ]);
             }
 
@@ -101,6 +119,7 @@ class HandleUsersType extends AbstractType
             $builder->remove('password');
         }
 
+        // Array to String to display in the form
         $this->roleTransformer($builder, 'roles');
 
     }

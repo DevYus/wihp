@@ -21,7 +21,7 @@ class UserChecker implements UserCheckerInterface
         if (!$user instanceof AppUser) {
             return;
         }
-
+        // User checker block the authentification if status is "en attente" or "desactivate"
         if ($user->getStatus() == 'en attente' || $user->getStatus() == 'desactive') {
             throw new LockedException();
         }

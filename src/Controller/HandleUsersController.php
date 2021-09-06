@@ -6,12 +6,15 @@ use App\Entity\User;
 use App\Form\HandleUsersType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
+/**
+ * Class HandleUsersController
+ * @package App\Controller
+ */
 class HandleUsersController extends AbstractController
 {
     /**
@@ -29,6 +32,7 @@ class HandleUsersController extends AbstractController
         $form = $this->createForm(HandleUsersType::class, $user);
         $form->handleRequest($request);
 
+        // Verify the form
         if($form->isSubmitted() && $form->isValid()) {
 
             //Symfony take data automatically, we have only to crypt password
@@ -46,7 +50,6 @@ class HandleUsersController extends AbstractController
             // Notice if all is well
             $this->addFlash('notice','L\'utilisateur a bien été crée');
 
-            //return $this->redirectToRoute( '', ['id' => $user->getId()]);
             return $this->redirectToRoute('users_list');
         }
 
@@ -64,11 +67,11 @@ class HandleUsersController extends AbstractController
      */
     public function editUser(Request $request,User $user, EntityManagerInterface $em): Response
     {
-
         // Creation and handle the UsersType that we created
         $form = $this->createForm(HandleUsersType::class, $user);
         $form->handleRequest($request);
 
+        // Verify the form
         if($form->isSubmitted() && $form->isValid()) {
 
             // Persist and insert in BDD
@@ -76,7 +79,7 @@ class HandleUsersController extends AbstractController
             $em->flush();
 
             // Notice if all is well
-            $this->addFlash('notice','L\'utilisateur a bien été crée');
+            $this->addFlash('notice','L\'utilisateur a bien été édité');
 
             //return $this->redirectToRoute( '', ['id' => $user->getId()]);
             return $this->redirectToRoute('users_list');

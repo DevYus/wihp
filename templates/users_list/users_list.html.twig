@@ -3,10 +3,6 @@
 {% block title %}Hello UsersListController!{% endblock %}
 
 {% block body %}
-<style>
-
-
-</style>
 
 <div class="wrapper">
     <h1>Liste des utilisateurs</h1>
@@ -19,6 +15,15 @@
 
         <div class="flashMessage">
             <span class="spanFlashMessage"></span>
+            <span class="spanFlashMessageSymfony">
+                 {% for message in app.flashes('notice') %}
+                   {% if message is defined %}
+                     <div class="flash-notice">
+                        {{ message }}
+                    </div>
+                   {% endif %}
+                 {% endfor %}
+            </span>
         </div>
 
         <table class="tableUsersList">
@@ -46,11 +51,11 @@
                                 <td>{{ user.lastname }}</td>
                                 <td>{{ user.firstname }}</td>
                                 <td>{{ user.email }}</td>
-                                <td id="tdLogin" data-login="{{ user.login }}">{{ user.login }}</td>
+                                <td id="tdLogin" data-id="{{ user.id }}">{{ user.login }}</td>
                                 <td>{{ user.roles[0] }}</td>
 
                                 <td>
-                                    <span id="spanStatus">{{ user.status }}</span>
+                                    <span id="spanStatus" data-id="{{ user.id }}">{{ user.status }}</span>
                                     <form action="" method="post">
                                         <select name="selectStatus" data-id="{{ user.id }}" class="form-control status">
                                             <option class="optionStatusBtn defaultValue" value="{{ user.status }}"></option>
@@ -58,7 +63,6 @@
                                             <option class="optionStatusBtn" value="en attente">en attente</option>
                                             <option class="optionStatusBtn" value="desactive">desactive</option>
                                         </select>
-                                        {#<input type="hidden" id="idUser"value="{{ user.id }}">#}
                                     </form>
 
                                 </td>
@@ -79,11 +83,11 @@
                                 <td>{{ user.lastname }}</td>
                                 <td>{{ user.firstname }}</td>
                                 <td>{{ user.email }}</td>
-                                <td id="tdLogin" data-login="{{ user.login }}">{{ user.login }}</td>
+                                <td id="tdLogin" data-id="{{ user.id }}">{{ user.login }}</td>
                                 <td>{{ user.roles[0] }}</td>
 
                                 <td>
-                                    <span id="spanStatus">{{ user.status }}</span>
+                                    <span id="spanStatus" data-id="{{ user.id }}">{{ user.status }}</span>
                                     <form action="" method="post">
                                         <select name="selectStatus" data-id="{{ user.id }}" class="form-control status">
                                             <option class="optionStatusBtn defaultValue" value="{{ user.status }}"></option>
@@ -91,7 +95,6 @@
                                             <option class="optionStatusBtn" value="en attente">en attente</option>
                                             <option class="optionStatusBtn" value="desactive">desactive</option>
                                         </select>
-                                        {#<input type="hidden" id="idUser"value="{{ user.id }}">#}
                                     </form>
 
                                 </td>
@@ -130,9 +133,8 @@
                 // Data Id needed to get the id ( otherwise jquery take only the first select of the loop )
                 let id = $(this).attr("data-id");
                 // Take login .Need to display flash message
-                let login = $("#tdLogin").attr("data-login");
+                let login = $(`#tdLogin[data-id='${id}']`).text();
 
-                alert($('.defaultValue').val(optionValue));
 
                 $.ajax({
                     type:"POST",
@@ -143,7 +145,7 @@
                     },
                     success:function() {
                         // Update table span status
-                        $('#spanStatus').text(optionValue);
+                        $(`#spanStatus[data-id='${id}']`).text(optionValue);
                         // Update default option select value
                         $('.defaultValue').val(optionValue);
                         // Update element after success to notice the user
@@ -152,7 +154,7 @@
                             .css('display','block')
                         ;
                     }
-                })
+                });
 
 
             });

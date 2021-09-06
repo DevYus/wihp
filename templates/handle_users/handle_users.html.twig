@@ -3,117 +3,28 @@
 {% block title %}Hello HandleUsersController!{% endblock %}
 
 {% block body %}
-    <style>
 
-body {
-    margin:0;
-    padding:0
-}
+<div class="wrapper-handle">
 
-header {
-    background: #6EB3BE;
-}
-
-.nav {
- color: #fff;
- width:50%;
- margin:auto;
- padding:20px;
-}
-
-
-.text-transform {
-    text-transform: uppercase;
-}
-
-.title-header {
-font-size: 20px;
-font-weight: 900;
-
-}
-
-.addUserBtn {
-    width: 180px;
-    background: #6EB3BE;
-    padding: 5px;
-    margin-bottom: 5px;
-    display: block;
-    text-align: center;
-    text-decoration: none;
-    border-radius: 2px;
-    color: #FFF;
-    float: right;
-    margin-bottom: 20px;
-}
-
-  .wrapper {
-    width: 50%;
-    margin: 30px auto;
-    display: block;
-    font-family: 'Open Sans', sans-serif;
-   }
-
-   .wrapper h1 {font-size:22px;}
-
-   th, td {
-    width:130px;
-    padding:20px;
-    text-align: center;
-   }
-
-   .tableUsersList {
-        border-radius: 5px;
-        font-size: 14px;
-        width: 100%;
-        max-width: 100%;
-        white-space: nowrap;
-        border: none;
-        border-collapse: collapse;
-   }
-
-
-    .tableUsersList td {
-        border-right: 1px solid #f8f8f8;
-        font-size: 12px;
-    }
-
-    .tableUsersList thead th {
-        color: #ffffff;
-        background: #4FC3A1;
-    }
-
-    .tableUsersList thead th:nth-child(odd) {
-        color: #ffffff;
-        background: #324960;
-    }
-
-    .tableUsersList tr:nth-child(even) {
-        background: #F8F8F8;
-    }
-
-    .returnBtn {
-        display: block;
-        background: #6EB3BE;
-        width: 100px;
-        padding: 10px;
-        text-align: center;
-        margin: 10px 0px;
-        text-decoration: none;
-        color: #FFF;
-        border-radius: 5px;
-    }
-
-
-</style>
-
-<div class="wrapper">
+    <h1>Formulaire utilisateur</h1>
 
     {{ form_start(form) }}
+        {{ form_row(form.lastname) }}
+        {{ form_row(form.firstname) }}
+
+        {% if app.request.attributes.get('_route') == 'handle_users'  %}
+            {{ form_row(form.password) }}
+        {% endif %}
+
+        {{ form_row(form.email) }}
+        {{ form_row(form.login) }}
+        {{ form_row(form.roles) }}
+        {{ form_row(form.status) }}
         <div>
-            <button type="submit" id="handle_users_submit">Register</button>
+            <button type="submit" id="handle_users_submit" class="handleBtn">Register</button>
+            <a href="{{ path('users_list') }}" class="returnBtn">Retour</a>
         </div>
     {{ form_end(form) }}
-    <a href="{{ path('users_list') }}" class="returnBtn">Retour</a>
 
 </div>
 

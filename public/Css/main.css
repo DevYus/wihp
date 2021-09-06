@@ -8,20 +8,55 @@ header {
     background: #6EB3BE;
 }
 
+th, td {
+    width:130px;
+    padding:20px;
+    text-align: center;
+}
+
 .nav {
     color: #fff;
-    width:50%;
+    width:60%;
     margin:auto;
     padding:20px;
 }
 
+.firstPartHeader {
+    display: inline-block;
+}
 
+.secondPartHeader {
+    display: inline-block;
+    float: right;
+}
+
+.secondPartHeader ul {
+    padding: 3px 0px 0px 0px;
+    margin: 0;
+}
+
+.secondPartHeader ul li {
+    display: inline-block;
+    width: 130px;
+    text-align: right;
+}
+
+.secondPartHeader ul li a {
+    color: #FFF;
+    text-decoration: none;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.alignCenter{
+    text-align: center !important;
+}
 .text-transform {
     text-transform: uppercase;
 }
 
 .title-header {
-    font-size: 20px;
+    font-size: 22px;
     font-weight: 900;
 
 }
@@ -55,10 +90,16 @@ header {
 
 .wrapper h1 {font-size:22px;}
 
-th, td {
-    width:130px;
-    padding:20px;
-    text-align: center;
+.wrapper-handle {
+    width: 50%;
+    margin: 30px auto;
+    display: block;
+    font-family: 'Open Sans', sans-serif;
+}
+
+.wrapper-handle h1 {
+    font-size: 25px;
+    margin-bottom: 45px;
 }
 
 .tableUsersList {
@@ -97,9 +138,10 @@ th, td {
 
 .loginForm {
     width: 20%;
-    margin: 0 auto;
+    margin: 200px auto;
     padding: 0px 15px 15px 15px;
     border: solid 1px #e9e9e9;
+    font-family: 'Open Sans', sans-serif;
 }
 
 .inputLoginForm {
@@ -107,6 +149,15 @@ th, td {
     width: 95%;
     border: 1px solid #bababa;
     border-radius: 2px;
+    margin-bottom: 10px;
+}
+
+.selectLoginForm {
+    padding: 10px;
+    width: 97%;
+    border: 1px solid #bababa;
+    border-radius: 2px;
+    margin-bottom: 10px;
 }
 
 .btnLogin {
@@ -133,4 +184,62 @@ th, td {
     display: block;
     width: 390px;
     display: none;
+    text-align: center;
+}
+
+.spanFlashMessageSymfony {
+    background: #cefeb8;
+    margin: 12px 0px;
+    display: block;
+    text-align: center;
+    width: 380px;
+}
+
+.flash-notice {
+    background: #cefeb8;
+    margin: 12px 0px;
+    text-align: center;
+}
+
+.returnBtn {
+    display: inline-block;
+    background: #6EB3BE;
+    width: 100px;
+    padding: 10px;
+    text-align: center;
+    margin: 10px 0px;
+    text-decoration: none;
+    color: #FFF;
+    border-radius: 5px;
+
+}
+
+.handleBtn {
+    display: inline-block;
+    background: #6EB3BE;
+    width: 100px;
+    padding: 11px;
+    text-align: center;
+    margin: 10px 0px;
+    text-decoration: none;
+    color: #FFF;
+    border-radius: 5px;
+    border: 1px solid #6EB3BE;
+    font-size: 16px;
+}
+
+@media screen and (max-width: 1600px) {
+
+    .wrapper {
+        width: 75%;
+    }
+
+    .nav {
+        width: 75%;
+    }
+
+    .loginForm {
+        width: 35%;
+        margin: 100px 0;
+    }
 }

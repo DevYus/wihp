@@ -3,7 +3,6 @@
 namespace App\Controller;
 
 use App\Entity\User;
-use App\Form\UpdateStatusUserType;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -12,7 +11,10 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
-
+/**
+ * Class UsersListController
+ * @package App\Controller
+ */
 class UsersListController extends AbstractController
 {
     /**
@@ -29,41 +31,27 @@ class UsersListController extends AbstractController
         // Several ways : use find() doctrine method or use a custom method if advanced developments are planned
         $users = $userRepository->findBy([],['id' => 'DESC']);
 
-        // Two ways to build form, in Controller or see Form Directory
-        // Here to build mini form to update status ( i prefer buildFormType)
-        /*
-        $form = $this->createForm(UpdateStatusUserType::class, $user);
-        $form->handleRequest($request);
-
-        //If the form is submitted and valid
-        if ($form->isSubmitted() && $form->isValid()) {
-            // Backup to database
-            $em->persist($user);
-            $em->flush();
-        }*/
-
-        return $this->render('users_list/index.html.twig', [
+        return $this->render('users_list/users_list.html.twig', [
             'users' => $users,
         ]);
     }
 
     /**
+     * @param UserRepository $userRepository
+     * @param Request $request
+     * @return JsonResponse
      * @Route("/update/ajax", name="update_ajax", methods={"POST"})
      */
-    public function ajaxAction(UserRepository $userRepository,EntityManagerInterface $em,Request $request)
+    public function ajaxAction(UserRepository $userRepository,Request $request)
     {
-
+        // Update the user status with new post parameter, i choose native sql
+        // for demonstration but we can also use querybuilder
         $updateStatus = $request->request->get('status');
         $idMember = $request->request->get('id');
 
-        //$userRepository->updateStatusUser($updateStatus,$idMember);
+        $userRepository->updateStatusUser($updateStatus,$idMember);
 
-        $userUpdate = $userRepository->findOneBy(['id' => $idMember]);
-        $userUpdate->setStatus($updateStatus);
-
-        $em->persist($userUpdate);
-        $em->flush();
-        return new JsonResponse($userUpdate);
+        return new JsonResponse('ok');
 
     }
 
